@@ -19,6 +19,58 @@ class GameSessionController extends BaseController
     ) {
     }
 
+    #[Route('/api/games', methods: ['POST'])]
+    public function createGame(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $gameType = $data['gameType'] ?? null;
+        $maxPlayers = $data['maxPlayers'] ?? null;
+
+        if (!is_string($gameType) || GameType::tryFrom($gameType) === null) {
+            throw new InvalidDataException('Valid gameType is required.');
+        }
+
+        if (!is_int($maxPlayers) || $maxPlayers <= 0) {
+            throw new InvalidDataException('maxPlayers must be a positive integer.');
+        }
+
+        $game = $this->gameService->createGame(
+            uniqid(more_entropy: true),
+            $gameType,
+            $maxPlayers,
+        );
+
+        return new JsonResponse([
+            'gameId' => $game->getId(),
+            'gameType' => $game->getSummaryType(),
+            'maxPlayers' => $game->getMaxPlayers(),
+            'currentPlayers' => 0,
+            'freeSlots' => $game->getMaxPlayers(),
+        ], Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/games/{id}/session', methods: ['POST'])]
+    public function prepareSession(string $id): JsonResponse
+    {
+        $game = $this->gameService->findGameById($id);
+
+        if ($game === null) {
+            throw new NotFoundException('Game not found.');
+        }
+
+        if (count($game->getPlayers()) > $game->getMaxPlayers()) {
+            throw new DomainLogicalException('Game has too many players.');
+        }
+
+        $sessionId = uniqid('session_', true);
+
+        return new JsonResponse([
+            'gameId' => $game->getId(),
+            'sessionId' => $sessionId,
+            'maxPlayers' => $game->getMaxPlayers(),
+        ], Response::HTTP_CREATED);
+    }
+
     #[Route('/api/games', methods: ['GET'])]
     public function getAvailableGames(Request $request): JsonResponse
     {
