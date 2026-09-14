@@ -15,13 +15,14 @@ RUN pecl install redis \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY composer.json composer.lock ./
+COPY web-socket/src /var/www/shared-src
 
+COPY matchmaking/composer.json matchmaking/composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-COPY . .
+COPY matchmaking/ .
 
-RUN php bin/console cache:clear
+RUN php bin/console cache:clear || true
 
 WORKDIR /var/www/html
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
