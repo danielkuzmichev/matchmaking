@@ -9,6 +9,7 @@ class Game
         private string $word,
         private string $summaryType,
         private int    $maxPlayers,
+        private int    $durationSeconds,
         private array  $players
     ) {
     }
@@ -38,6 +39,11 @@ class Game
         return $this->maxPlayers;
     }
 
+    public function getDurationSeconds(): int
+    {
+        return $this->durationSeconds;
+    }
+
     public function hasPlayer(string $playerToken): bool
     {
         foreach ($this->players as $player) {
@@ -56,6 +62,7 @@ class Game
             'word' => $this->word,
             'summary_type' => $this->summaryType,
             'max_players' => $this->maxPlayers,
+            'duration_seconds' => $this->durationSeconds,
             'players' => array_map(fn ($player) => $player->toArray(), $this->players)
         ];
     }
@@ -80,6 +87,7 @@ class Game
             $data['word'],
             $data['summary_type'],
             $data['max_players'],
+            $data['duration_seconds'] ?? 60,
             $players
         );
     }

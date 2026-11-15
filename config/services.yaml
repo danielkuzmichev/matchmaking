@@ -43,4 +43,6 @@ services:
 
     App\Game\Repository\GameRepositoryInterface: '@App\Application\Repository\Redis\Game\RedisGameRepository'
 
+    App\Redis\RedisClientInterface: '@redis.default'
+
     App\Game\Service\GameServiceInterface: '@App\Game\Service\GameService'

@@ -14,7 +14,7 @@ class GameService implements GameServiceInterface
     ) {
     }
 
-    public function createGame(string $id, string $summaryType, int $maxPlayers): Game
+    public function createGame(string $id, string $summaryType, int $maxPlayers, int $durationSeconds = 60): Game
     {
         $sessionWord = $this->wordRepository->getRandomSessionWord();
         $game = new Game(
@@ -22,6 +22,7 @@ class GameService implements GameServiceInterface
             $sessionWord,
             $summaryType,
             $maxPlayers,
+            $durationSeconds,
             []
         );
         $this->gameRepository->save($game);
