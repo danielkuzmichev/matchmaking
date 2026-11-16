@@ -4,7 +4,7 @@ namespace App\Game\Service;
 
 interface GameServiceInterface
 {
-    public function createGame(string $id, string $summaryType, int $maxPlayers, int $durationSeconds = 60): mixed;
+    public function createGame(string $id, string $summaryType, int $maxPlayers, int $durationSeconds): mixed;
 
     public function findGameById(string $id): mixed;
 

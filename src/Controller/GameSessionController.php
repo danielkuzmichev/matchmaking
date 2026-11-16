@@ -15,8 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GameSessionController extends BaseController
 {
-    private const MIN_TIME_SECONDS = 15;
-    private const MAX_TIME_SECONDS = 300;
     private const DEFAULT_TIME_SECONDS = 60;
 
     public function __construct(
@@ -46,8 +44,8 @@ class GameSessionController extends BaseController
             throw new InvalidDataException('maxPlayers must be a positive integer.');
         }
 
-        if (!is_int($durationSeconds) || $durationSeconds < self::MIN_TIME_SECONDS || $durationSeconds > self::MAX_TIME_SECONDS) {
-            throw new InvalidDataException('durationSeconds must be an integer between ' . self::MIN_TIME_SECONDS . ' and ' . self::MAX_TIME_SECONDS . '.');
+        if (!is_int($durationSeconds) || $durationSeconds <= 0) {
+            throw new InvalidDataException('durationSeconds must be a positive integer.');
         }
 
         $game = $this->gameService->createGame(
